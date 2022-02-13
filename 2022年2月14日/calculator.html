@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算器</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="number" placeholder="请输入数字..." id="number1" />
+        <select id="select">
+            <option id="addition">+</option>
+            <option id="subtraction">-</option>
+            <option id="multiplication">x</option>
+            <option id="division">÷</option>
+        </select>
+        <input type="number" placeholder="请输入数字..." id="number2" />
+        <button id="calculate">=</button>
+        <input type="text" placeholder="结果" readonly @value="result" />
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                result: 0,
+            },
+            methods: {
+                calculate: function () {
+                    if (document.getElementById('select').val() === 'addition') {
+                        this.result = document.getElementById('number1').val() + document.getElementById('number2').val()
+                    } else if (document.getElementById('select').val() === 'subtraction') {
+                        this.result = document.getElementById('number1').val() - document.getElementById('number2').val()
+                    } else if (document.getElementById('select').val() === 'multiplication') {
+                        this.result = document.getElementById('number1').val() * document.getElementById('number2').val()
+                    } else if (document.getElementById('select').val() === 'multiplication') {
+                        this.result = document.getElementById('number1').val() / document.getElementById('number2').val()
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
