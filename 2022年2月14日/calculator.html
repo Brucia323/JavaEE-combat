@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>计算器</title>
-    <script src="https://unpkg.com/vue@next"></script>
+    <!-- <script src="https://unpkg.com/vue@next"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 </head>
 
 <body>
@@ -19,8 +20,8 @@
             <option id="division">÷</option>
         </select>
         <input type="number" placeholder="请输入数字..." id="number2" />
-        <button id="calculate">=</button>
-        <input type="text" placeholder="结果" readonly @value="result" />
+        <button id="calculate" @click="calculate">=</button>
+        <input type="text" placeholder="结果" v-model="result" />
     </div>
     <script>
         var vm = new Vue({
@@ -30,14 +31,14 @@
             },
             methods: {
                 calculate: function () {
-                    if (document.getElementById('select').val() === 'addition') {
-                        this.result = document.getElementById('number1').val() + document.getElementById('number2').val()
-                    } else if (document.getElementById('select').val() === 'subtraction') {
-                        this.result = document.getElementById('number1').val() - document.getElementById('number2').val()
-                    } else if (document.getElementById('select').val() === 'multiplication') {
-                        this.result = document.getElementById('number1').val() * document.getElementById('number2').val()
-                    } else if (document.getElementById('select').val() === 'multiplication') {
-                        this.result = document.getElementById('number1').val() / document.getElementById('number2').val()
+                    if (document.getElementById('select').value === '+') {
+                        this.result = Number(document.getElementById('number1').value) + Number(document.getElementById('number2').value)
+                    } else if (document.getElementById('select').value === '-') {
+                        this.result = Number(document.getElementById('number1').value) - Number(document.getElementById('number2').value)
+                    } else if (document.getElementById('select').value === 'x') {
+                        this.result = Number(document.getElementById('number1').value) * Number(document.getElementById('number2').value)
+                    } else if (document.getElementById('select').value === '÷') {
+                        this.result = Number(document.getElementById('number1').value) / Number(document.getElementById('number2').value)
                     }
                 }
             }
