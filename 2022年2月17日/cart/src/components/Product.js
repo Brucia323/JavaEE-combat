@@ -1,8 +1,8 @@
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons/lib/icons"
-import { Card, Image } from "antd"
-import { useState } from "react"
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons/lib/icons'
+import { Card, Image } from 'antd'
+import { useState } from 'react'
 
-const Product = (props) => {
+const Product = props => {
     const [loading, setLoading] = useState(true)
 
     const handleMinus = () => {
@@ -20,15 +20,25 @@ const Product = (props) => {
     return (
         <Card
             cover={
-                <Image alt={props.product.name} src={props.product.img} onLoad={handleLoading} style={{ width: 128, height: 128 }} preview={false} placeholder={loading} />
+                <Image
+                    alt={props.product.name}
+                    src={props.product.img}
+                    onLoad={handleLoading}
+                    style={{ width: 128, height: 128 }}
+                    preview={false}
+                    placeholder={loading}
+                />
             }
             actions={[
                 <MinusOutlined key='minus' onClick={handleMinus} />,
-                <PlusOutlined key='plus' onClick={handlePlus} />
+                <PlusOutlined key='plus' onClick={handlePlus} />,
             ]}
             hoverable={true}
         >
-            <Card.Meta title={props.product.name} description={'$' + props.product.price} />
+            <Card.Meta
+                title={props.product.name}
+                description={'$' + props.product.price}
+            />
         </Card>
     )
 }
