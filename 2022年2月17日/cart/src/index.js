@@ -7,12 +7,12 @@ import zhCN from 'antd/lib/locale/zh_CN'
 import { ConfigProvider } from 'antd'
 
 ReactDOM.render(
-    <React.StrictMode>
-        <ConfigProvider locale={zhCN}>
-            <App />
-        </ConfigProvider>
-    </React.StrictMode>,
-    document.getElementById('root')
+  <React.StrictMode>
+    <ConfigProvider locale={zhCN}>
+      <App />
+    </ConfigProvider>
+  </React.StrictMode>,
+  document.getElementById('root')
 )
 
 // If you want to start measuring performance in your app, pass a function
