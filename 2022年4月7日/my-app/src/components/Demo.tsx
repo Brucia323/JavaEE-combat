@@ -202,12 +202,12 @@ const Demo = () => {
   return (
     <Layout>
       <PageHeader
-        className='site-background'
+        className='background'
         title='查询表格'
         subTitle='Demo'
       ></PageHeader>
       <Layout.Content
-        className='site-background'
+        className='background'
         style={{ padding: 24, margin: 24 }}
       >
         <Space direction='vertical' style={{ width: '100%' }}>
@@ -287,8 +287,12 @@ const Demo = () => {
                 批量删除
               </Button>
             </Popconfirm>
-            <Button icon={<ImportOutlined />} disabled>导入</Button>
-            <Button icon={<ExportOutlined />} disabled>导出</Button>
+            <Button icon={<ImportOutlined />} disabled>
+              导入
+            </Button>
+            <Button icon={<ExportOutlined />} disabled>
+              导出
+            </Button>
           </Space>
           <Table
             rowSelection={{

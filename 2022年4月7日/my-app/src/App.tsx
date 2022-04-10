@@ -8,7 +8,7 @@ const App = () => {
   return (
     <Layout>
       <Layout.Sider
-        className='site-background'
+        className='background shadow-1-right'
         style={{
           position: 'sticky',
           top: 0,
@@ -24,7 +24,7 @@ const App = () => {
       </Layout.Sider>
       <Layout>
         <Layout.Header
-          className='site-background'
+          className='background shadow-1-down'
           style={{
             height: 48,
             position: 'sticky',
@@ -36,7 +36,7 @@ const App = () => {
           <Route path='/' element={<Demo />} />
         </Routes>
         <Layout.Footer style={{ textAlign: 'center' }}>
-            <GithubOutlined /> ZZZCNY
+          <GithubOutlined /> ZZZCNY
         </Layout.Footer>
       </Layout>
     </Layout>
