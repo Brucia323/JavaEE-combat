@@ -31,8 +31,10 @@ const Demo = () => {
   }
 
   const [data, setData] = useState<DemoType[]>([])
+  const [tableLoading, setTableLoading] = useState<boolean>(false)
 
   useEffect(() => {
+    setTableLoading(true)
     DemoService.getAll()
       .then(d => setData(d))
       .catch(e => {
@@ -52,14 +54,18 @@ const Demo = () => {
   const [inputSearch, setInputSearch] = useState<string>('')
 
   useEffect(() => {
+    setTableLoading(true)
     setInputSearch('')
     setFilterData(data)
+    setTableLoading(false)
   }, [data])
 
   const handleSerch = (value: string) => {
+    setTableLoading(true)
     setFilterData(
       data.filter(p => p.username.search(new RegExp(value, 'i')) !== -1)
     )
+    setTableLoading(false)
   }
 
   const [usergroupDeleteDisabled, setUsergroupDeleteDisabled] =
@@ -292,6 +298,7 @@ const Demo = () => {
             dataSource={filterData}
             rowKey='id'
             pagination={{ onChange: handlePage, current: pageNumber }}
+            loading={tableLoading}
           >
             <Table.Column title='ID' dataIndex='id' />
             <Table.Column title='用户名' dataIndex='username' />
