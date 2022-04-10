@@ -17,7 +17,7 @@ const App = () => {
           zIndex: 999,
         }}
       >
-        <div style={{ height: 48 }} />
+        <div className='logo' />
         <Menu mode='inline' defaultSelectedKeys={['1']} selectedKeys={['1']}>
           <Menu.Item key='1'>查询表格</Menu.Item>
         </Menu>
