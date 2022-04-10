@@ -1,0 +1,14 @@
+@import '~antd/dist/antd.css';
+@import '~antd/dist/antd.dark.css' (prefers-color-scheme: dark);
+
+@media (prefers-color-scheme: light) {
+  .site-background {
+    background-color: white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .site-background {
+    background-color: #141414;
+  }
+}
