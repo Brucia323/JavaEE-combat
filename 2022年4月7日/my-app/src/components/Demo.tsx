@@ -5,17 +5,20 @@ import {
   ExportOutlined,
   ImportOutlined,
   PlusCircleOutlined,
+  SearchOutlined,
   UserDeleteOutlined,
   UsergroupDeleteOutlined,
 } from '@ant-design/icons'
 import {
   Button,
+  Col,
   Input,
   Layout,
   message,
   Modal,
   PageHeader,
   Popconfirm,
+  Row,
   Space,
   Table,
 } from 'antd'
@@ -51,20 +54,57 @@ const Demo = () => {
   }
 
   const [filterData, setFilterData] = useState<DemoType[]>([])
-  const [inputSearch, setInputSearch] = useState<string>('')
+  const [usernameSearch, setUsernameSearch] = useState<string>('')
+  const [nicknameSearch, setNicknameSearch] = useState<string>('')
+  const [emailSearch, setEmailSearch] = useState<string>('')
+  const [phoneSearch, setPhoneSearch] = useState<string>('')
+  const [addressSearch, setAddressSearch] = useState<string>('')
 
   useEffect(() => {
     setTableLoading(true)
-    setInputSearch('')
+    clearSearch()
     setFilterData(data)
     setTableLoading(false)
   }, [data])
 
-  const handleSerch = (value: string) => {
+  const clearSearch = () => {
+    setUsernameSearch('')
+    setNicknameSearch('')
+    setEmailSearch('')
+    setPhoneSearch('')
+    setAddressSearch('')
+  }
+
+  const handleSearch = () => {
     setTableLoading(true)
-    setFilterData(
-      data.filter(p => p.username.search(new RegExp(value, 'i')) !== -1)
-    )
+    handlePage(1)
+    let objectData: DemoType[] = data
+    if (usernameSearch !== '') {
+      objectData = objectData.filter(
+        p => p.username.search(new RegExp(usernameSearch, 'i')) !== -1
+      )
+    }
+    if (nicknameSearch !== '') {
+      objectData = objectData.filter(
+        p => p.nickname.search(new RegExp(nicknameSearch, 'i')) !== -1
+      )
+    }
+    if (emailSearch !== '') {
+      objectData = objectData.filter(
+        p => p.email.search(new RegExp(emailSearch, 'i')) !== -1
+      )
+    }
+    if (phoneSearch !== '') {
+      objectData = objectData.filter(
+        p => p.phone.search(new RegExp(phoneSearch, 'i')) !== -1
+      )
+    }
+    if (addressSearch !== '') {
+      objectData = objectData.filter(
+        p => p.address.search(new RegExp(addressSearch, 'i')) !== -1
+      )
+    }
+    setFilterData(objectData)
     setTableLoading(false)
   }
 
@@ -199,6 +239,11 @@ const Demo = () => {
     }
   }
 
+  const handleReset = () => {
+    clearSearch()
+    setFilterData(data)
+  }
+
   return (
     <Layout>
       <PageHeader
@@ -206,183 +251,251 @@ const Demo = () => {
         title='查询表格'
         subTitle='Demo'
       ></PageHeader>
-      <Layout.Content
-        className='background'
-        style={{ padding: 24, margin: 24 }}
-      >
+      <Layout.Content>
         <Space direction='vertical' style={{ width: '100%' }}>
-          <Input.Search
-            style={{ width: '200px' }}
-            allowClear
-            onSearch={handleSerch}
-            value={inputSearch}
-            onChange={e => setInputSearch(e.target.value)}
-          />
-          <Space>
-            <Button icon={<PlusCircleOutlined />} onClick={handleNewButton}>
-              新增
-            </Button>
-            <Modal
-              visible={newModalVisible}
-              title='新增'
-              onOk={handleNewOk}
-              onCancel={handleNewCancel}
-              okButtonProps={{ icon: <CheckCircleOutlined /> }}
-              cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-              confirmLoading={modalConfirmLoading}
-            >
-              <Space direction='vertical' style={{ width: '100%' }}>
-                <Input
-                  addonBefore='用户名'
-                  addonAfter='必填'
-                  placeholder='请输入'
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                  allowClear
-                  status={usernameInputStatus}
-                />
-                <Input
-                  addonBefore='昵称'
-                  placeholder='请输入'
-                  value={nickname}
-                  onChange={e => setNickname(e.target.value)}
-                  allowClear
-                />
-                <Input
-                  addonBefore='邮箱'
-                  placeholder='请输入'
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  allowClear
-                />
-                <Input
-                  addonBefore='电话'
-                  placeholder='请输入'
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  allowClear
-                />
-                <Input
-                  addonBefore='地址'
-                  placeholder='请输入'
-                  value={address}
-                  onChange={e => setAddress(e.target.value)}
-                  allowClear
-                />
-              </Space>
-            </Modal>
-            <Popconfirm
-              title={`你确定要删除${selection.length.toString()}位用户吗？`}
-              onCancel={handleUsergroupDeleteCancel}
-              onConfirm={handleUsergroupDeleteConfirm}
-              okButtonProps={{ icon: <CheckCircleOutlined /> }}
-              cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-              disabled={usergroupDeleteDisabled}
-            >
-              <Button
-                danger
-                icon={<UsergroupDeleteOutlined />}
-                disabled={usergroupDeleteDisabled}
-              >
-                批量删除
-              </Button>
-            </Popconfirm>
-            <Button icon={<ImportOutlined />} disabled>
-              导入
-            </Button>
-            <Button icon={<ExportOutlined />} disabled>
-              导出
-            </Button>
-          </Space>
-          <Table
-            rowSelection={{
-              selectedRowKeys: selection,
-              onChange: handleSelection,
-            }}
-            dataSource={filterData}
-            rowKey='id'
-            pagination={{ onChange: handlePage, current: pageNumber }}
-            loading={tableLoading}
+          <div
+            className='background'
+            style={{ padding: 24, margin: '24px 24px 0px' }}
           >
-            <Table.Column title='ID' dataIndex='id' />
-            <Table.Column title='用户名' dataIndex='username' />
-            <Table.Column title='昵称' dataIndex='nickname' />
-            <Table.Column title='邮箱' dataIndex='email' />
-            <Table.Column title='电话' dataIndex='phone' />
-            <Table.Column title='地址' dataIndex='address' />
-            <Table.Column
-              title='操作'
-              render={(value, record: DemoType, index) => (
-                <Space>
-                  <Button
-                    icon={<EditOutlined />}
-                    onClick={() => handleEditButton(record)}
-                  >
-                    编辑
-                  </Button>
-                  <Popconfirm
-                    title={`你确定要删除${record.username}吗？`}
-                    okButtonProps={{ icon: <CheckCircleOutlined /> }}
-                    cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-                    onConfirm={() => handleUserDeleteConfirm(index)}
-                  >
-                    <Button danger icon={<UserDeleteOutlined />}>
-                      删除
-                    </Button>
-                  </Popconfirm>
-                </Space>
-              )}
-            />
-          </Table>
-          <Modal
-            visible={editModalVisible}
-            title='编辑'
-            onOk={handleEditOk}
-            onCancel={handleEditCancel}
-            okButtonProps={{ icon: <CheckCircleOutlined /> }}
-            cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-            confirmLoading={modalConfirmLoading}
+            <Row gutter={[24, 24]} align='middle'>
+              <Col>
+                用户名：
+                <Input
+                  style={{ width: '200px' }}
+                  allowClear
+                  value={usernameSearch}
+                  onChange={e => setUsernameSearch(e.target.value)}
+                  placeholder='请输入'
+                />
+              </Col>
+              <Col>
+                昵称：
+                <Input
+                  style={{ width: '200px' }}
+                  allowClear
+                  value={nicknameSearch}
+                  onChange={e => setNicknameSearch(e.target.value)}
+                  placeholder='请输入'
+                />
+              </Col>
+              <Col>
+                邮箱：
+                <Input
+                  style={{ width: '200px' }}
+                  allowClear
+                  value={emailSearch}
+                  onChange={e => setEmailSearch(e.target.value)}
+                  placeholder='请输入'
+                />
+              </Col>
+              <Col>
+                电话：
+                <Input
+                  style={{ width: '200px' }}
+                  allowClear
+                  value={phoneSearch}
+                  onChange={e => setPhoneSearch(e.target.value)}
+                  placeholder='请输入'
+                />
+              </Col>
+              <Col>
+                地址：
+                <Input
+                  style={{ width: '200px' }}
+                  allowClear
+                  value={addressSearch}
+                  onChange={e => setAddressSearch(e.target.value)}
+                  placeholder='请输入'
+                />
+              </Col>
+              <Col>
+                <Button icon={null} onClick={handleReset}>
+                  重置
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type='primary'
+                  onClick={handleSearch}
+                  icon={<SearchOutlined />}
+                >
+                  查询
+                </Button>
+              </Col>
+            </Row>
+          </div>
+          <div
+            className='background'
+            style={{ padding: 24, margin: '0px 24px 24px' }}
           >
             <Space direction='vertical' style={{ width: '100%' }}>
-              <Input
-                addonBefore='用户名'
-                addonAfter='必填'
-                placeholder='请输入'
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                allowClear
-                status={usernameInputStatus}
-              />
-              <Input
-                addonBefore='昵称'
-                placeholder='请输入'
-                value={nickname}
-                onChange={e => setNickname(e.target.value)}
-                allowClear
-              />
-              <Input
-                addonBefore='邮箱'
-                placeholder='请输入'
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                allowClear
-              />
-              <Input
-                addonBefore='电话'
-                placeholder='请输入'
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                allowClear
-              />
-              <Input
-                addonBefore='地址'
-                placeholder='请输入'
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                allowClear
-              />
+              <Space>
+                <Button icon={<PlusCircleOutlined />} onClick={handleNewButton}>
+                  新增
+                </Button>
+                <Modal
+                  visible={newModalVisible}
+                  title='新增'
+                  onOk={handleNewOk}
+                  onCancel={handleNewCancel}
+                  okButtonProps={{ icon: <CheckCircleOutlined /> }}
+                  cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
+                  confirmLoading={modalConfirmLoading}
+                >
+                  <Space direction='vertical' style={{ width: '100%' }}>
+                    <Input
+                      addonBefore='用户名'
+                      addonAfter='必填'
+                      placeholder='请输入'
+                      value={username}
+                      onChange={e => setUsername(e.target.value)}
+                      allowClear
+                      status={usernameInputStatus}
+                    />
+                    <Input
+                      addonBefore='昵称'
+                      placeholder='请输入'
+                      value={nickname}
+                      onChange={e => setNickname(e.target.value)}
+                      allowClear
+                    />
+                    <Input
+                      addonBefore='邮箱'
+                      placeholder='请输入'
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      allowClear
+                    />
+                    <Input
+                      addonBefore='电话'
+                      placeholder='请输入'
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      allowClear
+                    />
+                    <Input
+                      addonBefore='地址'
+                      placeholder='请输入'
+                      value={address}
+                      onChange={e => setAddress(e.target.value)}
+                      allowClear
+                    />
+                  </Space>
+                </Modal>
+                <Popconfirm
+                  title={`你确定要删除${selection.length.toString()}位用户吗？`}
+                  onCancel={handleUsergroupDeleteCancel}
+                  onConfirm={handleUsergroupDeleteConfirm}
+                  okButtonProps={{ icon: <CheckCircleOutlined /> }}
+                  cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
+                  disabled={usergroupDeleteDisabled}
+                >
+                  <Button
+                    danger
+                    icon={<UsergroupDeleteOutlined />}
+                    disabled={usergroupDeleteDisabled}
+                  >
+                    批量删除
+                  </Button>
+                </Popconfirm>
+                <Button icon={<ImportOutlined />} disabled>
+                  导入
+                </Button>
+                <Button icon={<ExportOutlined />} disabled>
+                  导出
+                </Button>
+              </Space>
+              <Table
+                rowSelection={{
+                  selectedRowKeys: selection,
+                  onChange: handleSelection,
+                }}
+                dataSource={filterData}
+                rowKey='id'
+                pagination={{ onChange: handlePage, current: pageNumber }}
+                loading={tableLoading}
+              >
+                <Table.Column title='ID' dataIndex='id' />
+                <Table.Column title='用户名' dataIndex='username' />
+                <Table.Column title='昵称' dataIndex='nickname' />
+                <Table.Column title='邮箱' dataIndex='email' />
+                <Table.Column title='电话' dataIndex='phone' />
+                <Table.Column title='地址' dataIndex='address' />
+                <Table.Column
+                  title='操作'
+                  render={(value, record: DemoType, index) => (
+                    <Space>
+                      <Button
+                        icon={<EditOutlined />}
+                        onClick={() => handleEditButton(record)}
+                      >
+                        编辑
+                      </Button>
+                      <Popconfirm
+                        title={`你确定要删除${record.username}吗？`}
+                        okButtonProps={{ icon: <CheckCircleOutlined /> }}
+                        cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
+                        onConfirm={() => handleUserDeleteConfirm(index)}
+                      >
+                        <Button danger icon={<UserDeleteOutlined />}>
+                          删除
+                        </Button>
+                      </Popconfirm>
+                    </Space>
+                  )}
+                />
+              </Table>
+              <Modal
+                visible={editModalVisible}
+                title='编辑'
+                onOk={handleEditOk}
+                onCancel={handleEditCancel}
+                okButtonProps={{ icon: <CheckCircleOutlined /> }}
+                cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
+                confirmLoading={modalConfirmLoading}
+              >
+                <Space direction='vertical' style={{ width: '100%' }}>
+                  <Input
+                    addonBefore='用户名'
+                    addonAfter='必填'
+                    placeholder='请输入'
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    allowClear
+                    status={usernameInputStatus}
+                  />
+                  <Input
+                    addonBefore='昵称'
+                    placeholder='请输入'
+                    value={nickname}
+                    onChange={e => setNickname(e.target.value)}
+                    allowClear
+                  />
+                  <Input
+                    addonBefore='邮箱'
+                    placeholder='请输入'
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    allowClear
+                  />
+                  <Input
+                    addonBefore='电话'
+                    placeholder='请输入'
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    allowClear
+                  />
+                  <Input
+                    addonBefore='地址'
+                    placeholder='请输入'
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
+                    allowClear
+                  />
+                </Space>
+              </Modal>
             </Space>
-          </Modal>
+          </div>
         </Space>
       </Layout.Content>
     </Layout>
