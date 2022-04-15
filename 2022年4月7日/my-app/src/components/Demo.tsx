@@ -4,6 +4,7 @@ import {
   EditOutlined,
   ExportOutlined,
   ImportOutlined,
+  InboxOutlined,
   PlusCircleOutlined,
   SearchOutlined,
   UserDeleteOutlined,
@@ -25,6 +26,7 @@ import {
 import { Key, useEffect, useState } from 'react'
 import { DemoType, InputStatus, NewDemoType } from '../types'
 import DemoService from '../services/demo'
+import Dragger from 'antd/lib/upload/Dragger'
 
 const Demo = () => {
   const [selection, setSelection] = useState<Key[]>([])
@@ -45,6 +47,12 @@ const Demo = () => {
         console.error(e)
       })
   }, [])
+
+  const load = async() => {
+    setTableLoading(true)
+    const data=await DemoService.getAll()
+    setData(data)
+  }
 
   const [pageNumber, setPageNumber] = useState<number>(1)
 
@@ -244,6 +252,16 @@ const Demo = () => {
     setFilterData(data)
   }
 
+  const [importVisible, setImportVisible] = useState(false)
+
+  const handleImportVisible = () => {
+    setImportVisible(!importVisible)
+  }
+
+  const handleExport = () => {
+    window.open('http://localhost:8080/api/demo/export')
+  }
+
   return (
     <Layout>
       <PageHeader
@@ -398,10 +416,47 @@ const Demo = () => {
                     批量删除
                   </Button>
                 </Popconfirm>
-                <Button icon={<ImportOutlined />} disabled>
+                <Button icon={<ImportOutlined />} onClick={handleImportVisible}>
                   导入
                 </Button>
-                <Button icon={<ExportOutlined />} disabled>
+                <Modal
+                  visible={importVisible}
+                  title='导入'
+                  footer={null}
+                  onCancel={() => setImportVisible(!importVisible)}
+                >
+                  <Dragger
+                    name='file'
+                    accept='.xls,.xlsx,.csv'
+                    action='http://localhost:8080/api/demo/import'
+                    onChange={info => {
+                      const { status } = info.file
+                      if (status !== 'uploading') {
+                        console.log(info.file, info.fileList)
+                      }
+                      if (status === 'done') {
+                        message.success(`${info.file.name} 文件上传成功。`)
+                        setImportVisible(!importVisible)
+                        load()
+                      } else if (status === 'error') {
+                        message.error(`${info.file.name} 文件上传失败。`)
+                      }
+                    }}
+                    maxCount={1}
+                    showUploadList={false}
+                  >
+                    <p className='ant-upload-drag-icon'>
+                      <InboxOutlined />
+                    </p>
+                    <p className='ant-upload-text'>
+                      点击或拖动文件到此区域进行上传
+                    </p>
+                    <p className='ant-upload-hint'>
+                      仅支持单一文件上传。支持 .xls、.xlsx、.csv
+                    </p>
+                  </Dragger>
+                </Modal>
+                <Button icon={<ExportOutlined />} onClick={handleExport}>
                   导出
                 </Button>
               </Space>

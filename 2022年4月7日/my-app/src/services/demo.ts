@@ -23,4 +23,27 @@ const remove = async (id: number) => {
   return response.status
 }
 
-export default { getAll, createNew, update, remove }
+/**
+ * @deprecated
+ */
+const exportDemo = async () => {
+  const response = await axios.get(`${baseUrl}/export`, {
+    responseType: 'blob',
+  })
+  let fileName =
+    response.headers['content-disposition'].match(/filename=(.*)/)![1]
+  fileName = fileName.replace(new RegExp('"', 'g'), '')
+  const blob = new Blob([response.data], { type: 'application/octet-stream' })
+  const blobURL = window.URL.createObjectURL(blob)
+  const tempLink = document.createElement('a')
+  tempLink.style.display = 'none'
+  tempLink.href = blobURL
+  tempLink.setAttribute('download', decodeURI(fileName))
+  document.body.appendChild(tempLink)
+  tempLink.click()
+  console.log({ tempLink })
+  document.body.removeChild(tempLink)
+  window.URL.revokeObjectURL(blobURL)
+}
+
+export default { getAll, createNew, update, remove, exportDemo }
