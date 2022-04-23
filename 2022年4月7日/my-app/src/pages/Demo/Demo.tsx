@@ -1,13 +1,11 @@
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EditOutlined,
   ExportOutlined,
   ImportOutlined,
   InboxOutlined,
   PlusCircleOutlined,
   SearchOutlined,
-  UserDeleteOutlined,
   UsergroupDeleteOutlined,
 } from '@ant-design/icons'
 import {
@@ -21,12 +19,14 @@ import {
   Popconfirm,
   Row,
   Space,
-  Table,
 } from 'antd'
 import { Key, useEffect, useState } from 'react'
-import { DemoType, InputStatus, NewDemoType } from '../types'
-import DemoService from '../services/demo'
+import { DemoType, NewDemoType } from '../../types'
+import DemoService from '../../services/demo'
 import Dragger from 'antd/lib/upload/Dragger'
+import NewForm from './components/NewForm'
+import EditForm from './components/EditForm'
+import DemoTable from './components/DemoTable'
 
 const Demo = () => {
   const [selection, setSelection] = useState<Key[]>([])
@@ -48,16 +48,13 @@ const Demo = () => {
       })
   }, [])
 
-  const load = async() => {
+  const load = async () => {
     setTableLoading(true)
-    const data=await DemoService.getAll()
+    const data = await DemoService.getAll()
     setData(data)
   }
 
-  const [pageNumber, setPageNumber] = useState<number>(1)
-
-  const handlePage = (page: number) => {
-    setPageNumber(page)
+  const clearSelection = () => {
     setSelection([])
   }
 
@@ -85,7 +82,6 @@ const Demo = () => {
 
   const handleSearch = () => {
     setTableLoading(true)
-    handlePage(1)
     let objectData: DemoType[] = data
     if (usernameSearch !== '') {
       objectData = objectData.filter(
@@ -127,59 +123,6 @@ const Demo = () => {
     }
   }, [selection])
 
-  const [username, setUsername] = useState<string>('')
-  const [nickname, setNickname] = useState<string>('')
-  const [email, setEmail] = useState<string>('')
-  const [phone, setPhone] = useState<string>('')
-  const [address, setAddress] = useState<string>('')
-
-  const [newModalVisible, setNewModalVisible] = useState<boolean>(false)
-  const [modalConfirmLoading, setModalConfirmLoading] = useState<boolean>(false)
-
-  const handleNewButton = () => {
-    setModalConfirmLoading(false)
-    setNewModalVisible(true)
-  }
-
-  const [usernameInputStatus, setUsernameInputStatus] =
-    useState<InputStatus>('')
-
-  const handleNewOk = async () => {
-    setModalConfirmLoading(true)
-    if (username === '') {
-      setUsernameInputStatus('error')
-      return setModalConfirmLoading(false)
-    }
-    const newDemo: NewDemoType = {
-      username,
-      nickname,
-      email,
-      phone,
-      address,
-    }
-    const body: DemoType = await DemoService.createNew(newDemo)
-    setData(data.concat(body))
-    setNewModalVisible(false)
-    clearInput()
-    setModalConfirmLoading(false)
-  }
-
-  const handleNewCancel = () => {
-    setNewModalVisible(false)
-    clearInput()
-    setModalConfirmLoading(false)
-  }
-
-  const clearInput = () => {
-    setEditId(0)
-    setUsername('')
-    setNickname('')
-    setEmail('')
-    setPhone('')
-    setAddress('')
-    setUsernameInputStatus('')
-  }
-
   const handleUsergroupDeleteConfirm = () => {
     const s: number[] = [Number(...selection)]
     s.forEach(async (v: number) => {
@@ -198,53 +141,25 @@ const Demo = () => {
   }
 
   const [editModalVisible, setEditModalVisible] = useState(false)
-  const [editId, setEditId] = useState<number>(0)
+  const [editDemo, setEditDemo] = useState<DemoType>()
 
   const handleEditButton = (record: DemoType) => {
-    setEditId(record.id)
-    setUsername(record.username)
-    setNickname(record.nickname)
-    setEmail(record.email)
-    setPhone(record.phone)
-    setAddress(record.address)
-    setUsernameInputStatus('')
-    setModalConfirmLoading(false)
+    setEditDemo(record)
     setEditModalVisible(true)
   }
 
-  const handleEditOk = async () => {
-    setModalConfirmLoading(true)
-    if (username === '') {
-      setUsernameInputStatus('error')
-      return setModalConfirmLoading(false)
-    }
-    const newDemo: DemoType = {
-      id: editId,
-      username,
-      nickname,
-      email,
-      phone,
-      address,
-    }
-    const body = await DemoService.update(editId, newDemo)
-    setData(data.map(d => (d.id === editId ? body : d)))
+  const handleEditOk = async (values: DemoType) => {
+    const body = await DemoService.update(values.id, values)
+    setData(data.map(d => (d.id === values.id ? body : d)))
     setEditModalVisible(false)
-    clearInput()
-    setModalConfirmLoading(false)
   }
 
   const handleEditCancel = () => {
     setEditModalVisible(false)
-    clearInput()
   }
 
-  const handleUserDeleteConfirm = async (index: number) => {
-    const status = await DemoService.remove(index)
-    if (status === 204) {
-      setData(data.filter(d => d.id !== index))
-    } else {
-      message.error('删除失败')
-    }
+  const handleUserDelete = (index: number) => {
+    setData(data.filter(d => d.id !== index))
   }
 
   const handleReset = () => {
@@ -264,11 +179,7 @@ const Demo = () => {
 
   return (
     <Layout>
-      <PageHeader
-        className='background'
-        title='查询表格'
-        subTitle='Demo'
-      ></PageHeader>
+      <PageHeader className='background' title='查询表格' subTitle='Demo' />
       <Layout.Content>
         <Space direction='vertical' style={{ width: '100%' }}>
           <div
@@ -351,55 +262,11 @@ const Demo = () => {
                 <Button icon={<PlusCircleOutlined />} onClick={handleNewButton}>
                   新增
                 </Button>
-                <Modal
+                <NewForm
                   visible={newModalVisible}
-                  title='新增'
-                  onOk={handleNewOk}
+                  onCreate={handleNewOk}
                   onCancel={handleNewCancel}
-                  okButtonProps={{ icon: <CheckCircleOutlined /> }}
-                  cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-                  confirmLoading={modalConfirmLoading}
-                >
-                  <Space direction='vertical' style={{ width: '100%' }}>
-                    <Input
-                      addonBefore='用户名'
-                      addonAfter='必填'
-                      placeholder='请输入'
-                      value={username}
-                      onChange={e => setUsername(e.target.value)}
-                      allowClear
-                      status={usernameInputStatus}
-                    />
-                    <Input
-                      addonBefore='昵称'
-                      placeholder='请输入'
-                      value={nickname}
-                      onChange={e => setNickname(e.target.value)}
-                      allowClear
-                    />
-                    <Input
-                      addonBefore='邮箱'
-                      placeholder='请输入'
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      allowClear
-                    />
-                    <Input
-                      addonBefore='电话'
-                      placeholder='请输入'
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
-                      allowClear
-                    />
-                    <Input
-                      addonBefore='地址'
-                      placeholder='请输入'
-                      value={address}
-                      onChange={e => setAddress(e.target.value)}
-                      allowClear
-                    />
-                  </Space>
-                </Modal>
+                />
                 <Popconfirm
                   title={`你确定要删除${selection.length.toString()}位用户吗？`}
                   onCancel={handleUsergroupDeleteCancel}
@@ -460,95 +327,21 @@ const Demo = () => {
                   导出
                 </Button>
               </Space>
-              <Table
-                rowSelection={{
-                  selectedRowKeys: selection,
-                  onChange: handleSelection,
-                }}
-                dataSource={filterData}
-                rowKey='id'
-                pagination={{ onChange: handlePage, current: pageNumber }}
-                loading={tableLoading}
-              >
-                <Table.Column title='ID' dataIndex='id' />
-                <Table.Column title='用户名' dataIndex='username' />
-                <Table.Column title='昵称' dataIndex='nickname' />
-                <Table.Column title='邮箱' dataIndex='email' />
-                <Table.Column title='电话' dataIndex='phone' />
-                <Table.Column title='地址' dataIndex='address' />
-                <Table.Column
-                  title='操作'
-                  render={(value, record: DemoType, index) => (
-                    <Space>
-                      <Button
-                        icon={<EditOutlined />}
-                        onClick={() => handleEditButton(record)}
-                      >
-                        编辑
-                      </Button>
-                      <Popconfirm
-                        title={`你确定要删除${record.username}吗？`}
-                        okButtonProps={{ icon: <CheckCircleOutlined /> }}
-                        cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-                        onConfirm={() => handleUserDeleteConfirm(index)}
-                      >
-                        <Button danger icon={<UserDeleteOutlined />}>
-                          删除
-                        </Button>
-                      </Popconfirm>
-                    </Space>
-                  )}
-                />
-              </Table>
-              <Modal
+              <DemoTable
+                selection={selection}
+                handleSelection={handleSelection}
+                data={filterData}
+                onPage={clearSelection}
+                tableLoading={tableLoading}
+                handleEditButton={handleEditButton}
+                handleUserDelete={handleUserDelete}
+              />
+              <EditForm
                 visible={editModalVisible}
-                title='编辑'
-                onOk={handleEditOk}
+                onEdit={handleEditOk}
                 onCancel={handleEditCancel}
-                okButtonProps={{ icon: <CheckCircleOutlined /> }}
-                cancelButtonProps={{ icon: <CloseCircleOutlined /> }}
-                confirmLoading={modalConfirmLoading}
-              >
-                <Space direction='vertical' style={{ width: '100%' }}>
-                  <Input
-                    addonBefore='用户名'
-                    addonAfter='必填'
-                    placeholder='请输入'
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    allowClear
-                    status={usernameInputStatus}
-                  />
-                  <Input
-                    addonBefore='昵称'
-                    placeholder='请输入'
-                    value={nickname}
-                    onChange={e => setNickname(e.target.value)}
-                    allowClear
-                  />
-                  <Input
-                    addonBefore='邮箱'
-                    placeholder='请输入'
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    allowClear
-                  />
-                  <Input
-                    addonBefore='电话'
-                    placeholder='请输入'
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    allowClear
-                  />
-                  <Input
-                    addonBefore='地址'
-                    placeholder='请输入'
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    allowClear
-                  />
-                </Space>
-              </Modal>
+                initialValues={editDemo!}
+              />
             </Space>
           </div>
         </Space>

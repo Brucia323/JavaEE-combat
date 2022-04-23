@@ -2,7 +2,7 @@ import { Layout, Menu } from 'antd'
 import './App.css'
 import { GithubOutlined } from '@ant-design/icons'
 import { Route, Routes } from 'react-router-dom'
-import Demo from './components/Demo'
+import Demo from './pages/Demo/Demo'
 
 const App = () => {
   return (
