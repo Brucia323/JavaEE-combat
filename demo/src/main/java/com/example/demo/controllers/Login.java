@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/login")
-public class Login {
+@RequestMapping("/api/login")
+public class Login extends Cors {
     @Resource
     Environment env;
     @Resource
@@ -26,14 +26,14 @@ public class Login {
     
     @PostMapping()
     public ResponseEntity<Object> login(@RequestBody Map<String, ?> body) {
-        String username = (String) body.get("username");
+        String account = (String) body.get("account");
         String password = (String) body.get("password");
-        User user = userRepository.findByName(username);
+        User user = userRepository.findByAccount(account);
         boolean passwordCorrect = BCrypt.checkpw(password,
                 user.getPasswordHash());
         if (!passwordCorrect) {
             Map<String, String> response = new HashMap<>();
-            response.put("错误", "无效的用户名或密码");
+            response.put("错误", "无效的账号或密码");
             return ResponseEntity.status(401).body(response);
         }
         String token = JWT.create().withClaim("id", user.getId()).withClaim(
