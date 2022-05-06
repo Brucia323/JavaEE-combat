@@ -18,7 +18,7 @@ import static com.example.demo.utils.MiddleWare.getTokenFrom;
 
 @RestController
 @RequestMapping("/api/vaccine")
-public class Vaccines {
+public class Vaccines extends Cors {
     @Resource
     private VaccineRepository vaccineRepository;
     @Resource

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,8 +20,11 @@ public class User {
     @Id
     @GeneratedValue
     private int id;
+    @Column(unique = true,nullable = false)
+    private String account;
     private String name;
     @JsonIgnore
+    @Column(nullable = false)
     private String passwordHash;
     private boolean healthState;
 }

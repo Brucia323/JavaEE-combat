@@ -22,7 +22,8 @@ class DemoApplicationTests {
         String password = "123456";
         String salt = BCrypt.gensalt();
         String passwordHash = BCrypt.hashpw(password, salt);
-        User user = new User().setName("admin").setPasswordHash(passwordHash);
+        User user =
+                new User().setName("admin").setPasswordHash(passwordHash).setAccount("root");
         userRepository.save(user);
     }
 }

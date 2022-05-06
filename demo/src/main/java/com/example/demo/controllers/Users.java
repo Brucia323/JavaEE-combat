@@ -15,7 +15,7 @@ import static com.example.demo.utils.MiddleWare.getTokenFrom;
 
 @RestController
 @RequestMapping("/api/user")
-public class Users {
+public class Users extends Cors {
     @Resource
     private UserRepository userRepository;
     @Resource
