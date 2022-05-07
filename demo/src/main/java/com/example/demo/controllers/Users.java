@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
 import com.example.demo.models.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +29,8 @@ public class Users extends Cors {
     @GetMapping()
     public ResponseEntity<Object> getUserList(@RequestHeader("authorization") String authorization) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -41,8 +42,8 @@ public class Users extends Cors {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUser(@RequestHeader("authorization") String authorization, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -62,8 +63,8 @@ public class Users extends Cors {
     @PostMapping()
     public ResponseEntity<Object> createUser(@RequestHeader("authorization") String authorization, @RequestBody Map<String, ?> body) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -80,8 +81,8 @@ public class Users extends Cors {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@RequestHeader("authorization") String authorization, @RequestBody Map<String, ?> body, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -104,8 +105,8 @@ public class Users extends Cors {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@RequestHeader("authorization") String authorization, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);

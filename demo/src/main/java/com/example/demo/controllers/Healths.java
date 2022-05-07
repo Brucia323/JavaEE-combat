@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
 import com.example.demo.models.Health;
 import com.example.demo.models.HealthRepository;
 import com.example.demo.models.User;
@@ -27,8 +28,8 @@ public class Healths extends Cors {
     @GetMapping()
     public ResponseEntity<Object> getHealthList(@RequestHeader("authorization") String authorization) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -40,14 +41,16 @@ public class Healths extends Cors {
     @PostMapping()
     public ResponseEntity<Object> createHealth(@RequestHeader("authorization") String authorization, @RequestBody Map<String, ?> body) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         User user = userRepository.getById(userid);
+        user.setHealthState((boolean) body.get("healthState"));
+        userRepository.save(user);
         Health health = new Health().setUser(user).setHealthState((boolean) body.get(
                 "healthState")).setTime(LocalDateTime.now());
         healthRepository.saveAndFlush(health);
@@ -57,13 +60,13 @@ public class Healths extends Cors {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateHealth(@RequestHeader("authorization") String authorization, @RequestBody Map<String, ?> body, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         Health health = healthRepository.getById(id);
         if (userid == health.getUser().getId()) {
             health.setHealthState((boolean) body.get("healthState"));
@@ -76,13 +79,13 @@ public class Healths extends Cors {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteHealth(@RequestHeader("authorization") String authorization, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         Health health = healthRepository.getById(id);
         if (userid == health.getUser().getId()) {
             healthRepository.deleteById(id);
