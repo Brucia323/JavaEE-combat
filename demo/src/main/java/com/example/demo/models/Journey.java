@@ -21,6 +21,7 @@ public class Journey {
     @JoinColumn(name = "user_id")
     private User user;
     private String location;
-    private LocalDateTime time;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String more;
 }

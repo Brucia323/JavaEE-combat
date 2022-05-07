@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
 import com.example.demo.models.User;
 import com.example.demo.models.UserRepository;
 import com.example.demo.models.Vaccine;
@@ -28,8 +29,8 @@ public class Vaccines extends Cors {
     public ResponseEntity<Object> getVaccineList(@RequestHeader(
             "authorization") String authorization) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
@@ -39,18 +40,22 @@ public class Vaccines extends Cors {
     }
     
     @PostMapping()
-    public ResponseEntity<Object> createVaccine(@RequestHeader("authorization") String authorization, Map<String, ?> body) {
+    public ResponseEntity<Object> createVaccine(@RequestHeader("authorization") String authorization, @RequestBody Map<String, ?> body) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         User user = userRepository.getById(userid);
-        Vaccine vaccine =
-                new Vaccine().setName((String) body.get("name")).setNeedle((int) body.get("needle")).setTime(LocalDateTime.now()).setUser(user);
+        System.out.println(body.toString());
+        Vaccine vaccine = new Vaccine()
+                .setName((String) body.get("name"))
+                .setNeedle((int) body.get("needle"))
+                .setTime(LocalDateTime.now())
+                .setUser(user);
         vaccineRepository.saveAndFlush(vaccine);
         return ResponseEntity.status(201).body(vaccine);
     }
@@ -58,13 +63,13 @@ public class Vaccines extends Cors {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateVaccine(@RequestHeader("authorization") String authorization, @PathVariable("id") int id, @RequestBody Map<String, ?> body) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         Vaccine vaccine = vaccineRepository.getById(id);
         if (userid == vaccine.getUser().getId()) {
             vaccine.setName((String) body.get("name")).setNeedle((int) body.get(
@@ -78,13 +83,13 @@ public class Vaccines extends Cors {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteVaccine(@RequestHeader("authorization") String authorization, @PathVariable("id") int id) {
         String token = getTokenFrom(authorization);
-        Map<String, ?> decodedToken = JWT.decode(token).getClaims();
-        if (decodedToken.get("id") == null) {
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
             Map<String, String> response = new HashMap<>();
             response.put("错误", "token丢失或无效");
             return ResponseEntity.status(401).body(response);
         }
-        int userid = (int) decodedToken.get("id");
+        int userid = decodedToken.get("id").asInt();
         Vaccine vaccine = vaccineRepository.getById(id);
         if (userid == vaccine.getUser().getId()) {
             vaccineRepository.deleteById(id);
