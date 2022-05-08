@@ -2,15 +2,13 @@ package com.example.demo.controllers;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.Claim;
-import com.example.demo.models.Health;
-import com.example.demo.models.HealthRepository;
-import com.example.demo.models.User;
-import com.example.demo.models.UserRepository;
+import com.example.demo.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,5 +90,26 @@ public class Healths extends Cors {
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(403).build();
+    }
+    
+    @GetMapping("/count")
+    public ResponseEntity<Object> getEpidemic(@RequestHeader("authorization") String authorization) {
+        String token = getTokenFrom(authorization);
+        Map<String, Claim> decodedToken = JWT.decode(token).getClaims();
+        if (decodedToken.get("id").asInt() == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("错误", "token丢失或无效");
+            return ResponseEntity.status(401).body(response);
+        }
+        Object[][] epidemics = healthRepository.countHealthState();
+        Map<String,Object> map=new HashMap<>();
+        List<Map<String,Object>> list=new ArrayList<>();
+        for (Object[] epidemic:epidemics){
+            map.put("date",epidemic[0]);
+            map.put("healthState",epidemic[1]);
+            map.put("count",epidemic[2]);
+            list.add(map);
+        }
+        return ResponseEntity.status(200).body(list);
     }
 }
