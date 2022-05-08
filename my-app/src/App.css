@@ -1,0 +1,20 @@
+@import '~antd/dist/antd.css';
+/* @import '~antd/dist/antd.dark.css' (prefers-color-scheme: dark); */
+
+/* @media (prefers-color-scheme: light) { */
+.background-1 {
+  background-color: '#ffffff';
+}
+.background-2 {
+  background-color: '#fafafa';
+}
+/* } */
+
+/* @media (prefers-color-scheme: dark) {
+  .background-1 {
+    background-color: '#1f1f1f';
+  }
+  .background-2 {
+    background-color: '#141414';
+  }
+} */
