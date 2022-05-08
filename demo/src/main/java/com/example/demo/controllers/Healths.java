@@ -102,9 +102,9 @@ public class Healths extends Cors {
             return ResponseEntity.status(401).body(response);
         }
         Object[][] epidemics = healthRepository.countHealthState();
-        Map<String,Object> map=new HashMap<>();
         List<Map<String,Object>> list=new ArrayList<>();
         for (Object[] epidemic:epidemics){
+            Map<String,Object> map=new HashMap<>();
             map.put("date",epidemic[0]);
             map.put("healthState",epidemic[1]);
             map.put("count",epidemic[2]);
