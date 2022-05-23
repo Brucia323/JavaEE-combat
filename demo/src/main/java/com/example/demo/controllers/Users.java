@@ -73,7 +73,7 @@ public class Users extends Cors {
         String salt = BCrypt.gensalt();
         String passwordHash = BCrypt.hashpw(password, salt);
         User user = new User().setPasswordHash(passwordHash).setName((String) body.get(
-                "username"));
+                "username")).setAccount((String) body.get("account"));
         userRepository.saveAndFlush(user);
         return ResponseEntity.status(201).body(user);
     }
