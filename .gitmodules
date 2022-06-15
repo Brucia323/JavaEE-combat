@@ -1,0 +1,42 @@
+[submodule "shopping-cart"]
+	path = shopping-cart
+	url = https://github.com/ZZZCNY/shopping-cart.git
+[submodule "Simple-calculator-react"]
+	path = Simple-calculator-react
+	url = https://github.com/ZZZCNY/Simple-calculator-react.git
+[submodule "Simple-Student-Management-System"]
+	path = Simple-Student-Management-System
+	url = https://github.com/ZZZCNY/Simple-Student-Management-System.git
+[submodule "file-upload-web"]
+	path = file-upload-web
+	url = https://github.com/ZZZCNY/file-upload-web.git
+[submodule "Forward-and-reverse-timer-react"]
+	path = Forward-and-reverse-timer-react
+	url = https://github.com/ZZZCNY/Forward-and-reverse-timer-react.git
+[submodule "Forward-and-reverse-timer-vue"]
+	path = Forward-and-reverse-timer-vue
+	url = https://github.com/ZZZCNY/Forward-and-reverse-timer-vue.git
+[submodule "Campus-Epidemic-Management-System-web"]
+	path = Campus-Epidemic-Management-System-web
+	url = https://github.com/ZZZCNY/Campus-Epidemic-Management-System-web.git
+[submodule "Campus-Epidemic-Management-System-Server"]
+	path = Campus-Epidemic-Management-System-Server
+	url = https://github.com/ZZZCNY/Campus-Epidemic-Management-System-Server.git
+[submodule "file-upload-server"]
+	path = file-upload-server
+	url = https://github.com/ZZZCNY/file-upload-server.git
+[submodule "Simple-calculator-vue"]
+	path = Simple-calculator-vue
+	url = https://github.com/ZZZCNY/Simple-calculator-vue.git
+[submodule "personal-information-web"]
+	path = personal-information-web
+	url = https://github.com/ZZZCNY/personal-information-web.git
+[submodule "personal-information-server"]
+	path = personal-information-server
+	url = https://github.com/ZZZCNY/personal-information-server.git
+[submodule "Timer-and-Email-Sending"]
+	path = Timer-and-Email-Sending
+	url = https://github.com/ZZZCNY/Timer-and-Email-Sending.git
+[submodule "druid"]
+	path = druid
+	url = https://github.com/ZZZCNY/druid.git
